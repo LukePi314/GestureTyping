@@ -42,15 +42,15 @@ function getCode(left_gesture, right_gesture) {
 
 function getCharacter(code) {
   if (code[0] === "1") {
-    return code[2] || "";
-  }
-  else if (code[0] === "2") {
-    if (code[1] === "2") {
+    if (code[1] === "1" || code[1] === "2") {
       return " "; // スペース
     }
     else {
-      return "Enter";
+      return code[1] || "";
     }
+  }
+  else if (code[0] === "2") {
+    return "Enter";
   }
   else if (code[0] === "j") {
     return "backspace";
@@ -83,8 +83,8 @@ let gestures_results;
 let cam = null;
 let p5canvas = null;
 
-const MAX_HISTORY_LENGTH = 200; // 履歴の最大長
-const MIN_VALID_INPUT_COUNT = 10; // 有効な入力の最小数
+const MAX_HISTORY_LENGTH = 30; // 履歴の最大長
+const MIN_VALID_INPUT_COUNT = 3; // 有効な入力の最小数
 let charHistory = []; // 入力履歴を保持するオブジェクト
 
 function setup() {
@@ -117,6 +117,7 @@ function setup() {
       }
       let code = getCode(left_gesture, right_gesture);
       let c = getCharacter(code);
+      console.log(`Code: ${code}, Character: ${c}`);
 
       let now = millis();
       // if (c === lastChar) {
@@ -130,7 +131,7 @@ function setup() {
       //   lastCharTime = now;
       // }
 
-      // charHistoryの最頻値がMIN_VALID_INPUT_COUNT以上現れていたら
+      // // charHistoryの最頻値がMIN_VALID_INPUT_COUNT以上現れていたら
       if (c == "Enter") {
         const freq = {};
         for (const ch of charHistory) {
@@ -145,18 +146,18 @@ function setup() {
             maxCount = count;
           }
         }
-        if (maxCount >= MIN_VALID_INPUT_COUNT) {
+        if (maxCount >= MIN_VALID_INPUT_COUNT && maxChar !== "1") {
           typeChar(maxChar);
           charHistory = [];
         }
       }
-    }
-    else if (c != "") {
-      charHistory.push(c);
-    }
-    // 履歴が最大長を超えたら、古い履歴を削除
-    if (charHistory.length > MAX_HISTORY_LENGTH) {
-      charHistory.shift(); // 最初の要素を削除
+      else if (c != "") {
+        charHistory.push(c);
+      }
+      // 履歴が最大長を超えたら、古い履歴を削除
+      if (charHistory.length > MAX_HISTORY_LENGTH) {
+        charHistory.shift(); // 最初の要素を削除
+      }
     }
   }
 }
