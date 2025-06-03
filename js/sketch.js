@@ -4,12 +4,34 @@
 // 🤟(ILoveYou)
 function getCode(left_gesture, right_gesture) {
   let code_array = {
-    "Thumb_Up": 1,
-    "Thumb_Down": 2,
-    "Victory": 3,
-    "Pointing_Up": 4,
-    "Closed_Fist": 5,
-    "Open_Palm": 6,
+    "Open": "1",
+    "Close": "2",
+    "A": "a",
+    "B": "b",
+    "C": "c",
+    "D": "d",
+    "E": "e",
+    "F": "f",
+    "G": "g",
+    "H": "h",
+    "I": "i",
+    "J": "j",
+    "K": "k",
+    "L": "l",
+    "M": "m",
+    "N": "n",
+    "O": "o",
+    "P": "p",
+    "Q": "q",
+    "R": "r",
+    "S": "s",
+    "T": "t",
+    "U": "u",
+    "V": "v",
+    "W": "w",
+    "X": "x",
+    "Y": "y",
+    "Z": "z"
   }
   let left_code = code_array[left_gesture];
   let right_code = code_array[right_gesture];
@@ -19,19 +41,30 @@ function getCode(left_gesture, right_gesture) {
 }
 
 function getCharacter(code) {
-  const codeToChar = {
-    "11": "a", "12": "b", "13": "c", "14": "d", "15": "e", "16": "f",
-    "21": "g", "22": "h", "23": "i", "24": "j", "25": "k", "26": "l",
-    "31": "m", "32": "n", "33": "o", "34": "p", "35": "q", "36": "r",
-    "41": "s", "42": "t", "43": "u", "44": "v", "45": "w", "46": "x",
-    "51": "y", "52": "z", "53": " ", "54": "backspace"
-  };
-  return codeToChar[code] || "";
+  if (code[0] === "1") {
+    return code[2] || "";
+  }
+  else if (code[0] === "2") {
+    if (code[1] === "2") {
+      return " "; // スペース
+    }
+    else {
+      return "Enter";
+    }
+  }
+  else if (code[0] === "j") {
+    return "backspace";
+  }
+  else {
+    return "";
+  }
 }
 
 // 入力サンプル文章 
 let sample_texts = [
   "the quick brown fox jumps over the lazy dog",
+  "hogehoge",
+  "aiueo",
 ];
 
 // ゲームの状態を管理する変数
@@ -49,6 +82,10 @@ let game_start_time = 0;
 let gestures_results;
 let cam = null;
 let p5canvas = null;
+
+const MAX_HISTORY_LENGTH = 200; // 履歴の最大長
+const MIN_VALID_INPUT_COUNT = 10; // 有効な入力の最小数
+let charHistory = []; // 入力履歴を保持するオブジェクト
 
 function setup() {
   p5canvas = createCanvas(320, 240);
@@ -82,18 +119,45 @@ function setup() {
       let c = getCharacter(code);
 
       let now = millis();
-      if (c === lastChar) {
-        if (now - lastCharTime > 1000) {
-          // 1秒以上cが同じ値である場合の処理
-          typeChar(c);
-          lastCharTime = now;
+      // if (c === lastChar) {
+      //   if (now - lastCharTime > 1000) {
+      //     // 1秒以上cが同じ値である場合の処理
+      //     typeChar(c);
+      //     lastCharTime = now;
+      //   }
+      // } else {
+      //   lastChar = c;
+      //   lastCharTime = now;
+      // }
+
+      // charHistoryの最頻値がMIN_VALID_INPUT_COUNT以上現れていたら
+      if (c == "Enter") {
+        const freq = {};
+        for (const ch of charHistory) {
+          if (ch === "") continue;
+          freq[ch] = (freq[ch] || 0) + 1;
         }
-      } else {
-        lastChar = c;
-        lastCharTime = now;
+        let maxChar = "";
+        let maxCount = 0;
+        for (const [ch, count] of Object.entries(freq)) {
+          if (count > maxCount) {
+            maxChar = ch;
+            maxCount = count;
+          }
+        }
+        if (maxCount >= MIN_VALID_INPUT_COUNT) {
+          typeChar(maxChar);
+          charHistory = [];
+        }
       }
     }
-
+    else if (c != "") {
+      charHistory.push(c);
+    }
+    // 履歴が最大長を超えたら、古い履歴を削除
+    if (charHistory.length > MAX_HISTORY_LENGTH) {
+      charHistory.shift(); // 最初の要素を削除
+    }
   }
 }
 
