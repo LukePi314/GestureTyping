@@ -4,7 +4,7 @@
 // 🤟(ILoveYou)
 function getCode(left_gesture, right_gesture) {
   let code_array = {
-    "Close": "0",
+    "None": "",
     "Open": "1",
     "Close": "2",
     "A": "a",
