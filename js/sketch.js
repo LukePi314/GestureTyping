@@ -63,9 +63,7 @@ function getCharacter(code) {
 
 // 入力サンプル文章 
 let sample_texts = [
-  "the quick brown fox jumps over the lazy dog",
-  "hogehoge",
-  "aiueo",
+  "the quick brown fox jumps over the lazy dog"
 ];
 
 // ゲームの状態を管理する変数
