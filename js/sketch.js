@@ -82,9 +82,9 @@ let gestures_results;
 let cam = null;
 let p5canvas = null;
 
-const MAX_HISTORY_LENGTH = 30; // 履歴の最大長
-const MIN_VALID_INPUT_COUNT = 3; // 有効な入力の最小数
-let charHistory = []; // 入力履歴を保持するオブジェクト
+const MAX_HISTORY_LENGTH = 30; // 履歴の最大step数
+const MIN_VALID_INPUT_COUNT = 3; // 有効な入力の最小step数
+let charHistory = []; // 入力履歴
 
 function setup() {
   p5canvas = createCanvas(320, 240);
@@ -155,7 +155,7 @@ function setup() {
       }
       // 履歴が最大長を超えたら、古い履歴を削除
       if (charHistory.length > MAX_HISTORY_LENGTH) {
-        charHistory.shift(); // 最初の要素を削除
+        charHistory.shift();
       }
     }
   }
